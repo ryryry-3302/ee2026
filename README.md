@@ -1,2 +1,20 @@
-# ee2026
-create a folder for ur individual sources
+# EE2026 Integration Task
+
+## Configuration
+
+cd into the MODS folder and clone this repo.
+```
+cd MODS
+git clone https://github.com/ryryry-3302/ee2026.git
+```
+Delete the original `MODS.SRCS` file and rename the `ee2026` file to `MODS.SRCS`.
+
+The files in this repository should have folders for `MODS.SRCS`, importantly, 
+1. `constrs_1` which contains the constaints file
+2. `sources_1` which contains all the relevant design source files. 
+
+### .gitignore - IMPORTANT
+- Note that for a free account, the maximum repo size is **50MB**. Hence, the .gitignore folder specifically ignores files that take up high storage. `sources_1\ip` was found to take up 61.6MB by default. Not sure what its for. 
+- The simulation folder is for now, but could be removed in the future if we need to share simulation files.
+
+
