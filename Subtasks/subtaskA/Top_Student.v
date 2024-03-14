@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Top_Student (input clk,input [15:0]sw, input btnC,input btnD,output [7:0]JB);
+module Top_Student (input [15:0]sw,input clk, input btnC,input btnD,output [7:0]JB);
         wire CLOCKOUT6;
         wire CLOCKOUT25;
         wire fb;
@@ -39,13 +39,29 @@ module Top_Student (input clk,input [15:0]sw, input btnC,input btnD,output [7:0]
         Oled_Display display(.clk(CLOCKOUT6), .reset(0), .frame_begin(fb), .sending_pixels(sendingpix), .sample_pixel(samplepix), .pixel_index(pixel_index), .pixel_data(oled_data), .cs(JB[0]), .sdin(JB[1]), .sclk(JB[3]), .d_cn(JB[4]), .resn(JB[5]), .vccen(JB[6]), .pmoden(JB[7]));
         indexToXY indexToXY(.pixel_index(pixel_index), .X_coord(xcoor), .Y_coord(ycoor));
         
+        reg enable = 0;
+        always @ (posedge CLOCKOUT25)
+        begin
+            if(~sw[0])begin
+            enable <= 0;
+            
+            end
+            else begin
+            enable <= 1;
+            end
+        end
+        
+        
         //btnC press status     
         reg state = 0;
         always@(posedge CLOCKOUT25)
         begin
-            if(btnC)
+            if(~enable)begin
+            state <= 1'b0;
+            end
+            if(btnC && enable)
             begin
-                state = 1;
+                state <= 1;
             end
         end
         
@@ -92,8 +108,9 @@ module Top_Student (input clk,input [15:0]sw, input btnC,input btnD,output [7:0]
          
          //toggle state only if state 1 is 1
          reg [1:0]state2 = 2'b00;
-         always @ (posedge btnDpress) 
-         if (state)begin
+         always @ (posedge (btnDpress| ~enable)) 
+         begin
+         if (state && enable )begin
              begin
                  if (state2 < 2'b11) 
                  begin
@@ -105,8 +122,13 @@ module Top_Student (input clk,input [15:0]sw, input btnC,input btnD,output [7:0]
                  end         
              end
          end
+         else begin
+            state2 <=2'b00;
+         end
+         end
          
-         always @ (posedge CLOCKOUT25) begin
+         always @ (posedge CLOCKOUT25) 
+         begin
            if (state)begin
            case (state2)
                2'b01 : begin
@@ -131,7 +153,7 @@ module Top_Student (input clk,input [15:0]sw, input btnC,input btnD,output [7:0]
         end
                  
         always@(posedge CLOCKOUT25) begin
-           if (red)
+           if (red && enable)
            begin
                 oled_data <= 16'hF800;
            end 
@@ -161,4 +183,6 @@ module Top_Student (input clk,input [15:0]sw, input btnC,input btnD,output [7:0]
            end
            end
         end
+        
+
 endmodule
