@@ -17,7 +17,7 @@ The files in this repository should have folders for `MODS.SRCS`, importantly,
 3. `Subtasks` which is meant for personal backup and documentation
 
 ## Troubleshooting
-There might be some issues where vivado is unable to detect a certain file as a design source. The solution I found was to move the file to another location, add a new design source in vivado with the same file name and copy the contents of that file into the new design source in vivado.
+There might be some issues where vivado is unable to detect a certain file as a design source. The simplest solution in vivado is to go to `File > Add Sources > Add Files`
 
 ## REMINDERS
 Remember to pull from main before pushing to prevent any merge conflicts.
