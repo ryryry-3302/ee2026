@@ -24,7 +24,7 @@ module Top_Student (
 );
 
     //OLED Driver -----------------------------------
-    reg [15:0] oled_colour;
+    wire [15:0] oled_colour;
     wire frame_begin;
     wire [12:0] pixel_index;
     wire sending_pixels, sample_pixel;
@@ -62,6 +62,20 @@ module Top_Student (
     wire [6:0] Seg_To_Draw;
     wire [15:0] paint_colour_chooser;
     //---------------------------------------------------
+    
+    //Task Switching
+    //wire taskb_task_active;
+    //assign taskb_task_active = sw[2];
+    reg task_b_active = 1'b0;
+    always@(posedge CLK_10KHz)
+    begin
+        task_b_active = sw[2];
+    end
+    
+    SubTaskB taskb(.clk(clk), .SW0(sw[0]), .task_active(task_b_active),
+                   .btnC(btnC),.btnL(btnL),.btnR(btnR), 
+                   .pixel_index(pixel_index),
+                   .oled_colour(oled_colour));
 
 
     //Insantiate Imported Modules -----------------------
