@@ -75,7 +75,8 @@ module Draw_MulSquares(
                           .Y_coord_start(Y_COOR_1),
                           .length(SQUARE_LEN),
                           .draw(DrawSquare5));
- 
+                          
+                          
     
     always @(*)
     begin

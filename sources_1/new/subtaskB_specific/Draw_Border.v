@@ -24,6 +24,7 @@ module Draw_Border(
     input [12:0] pixel_index,
     input btnL_filtered,
     input btnR_filtered,
+    input task_active,
     output reg draw,
     output reg [15:0] colour);
     
@@ -33,12 +34,14 @@ module Draw_Border(
     // 000, 001, 010, 011, 100
     reg [2:0] border_pos = 3'b010; //Start at the middle
     
-    always@(posedge (btnL_filtered|btnR_filtered))
+    always@(posedge ( (btnL_filtered | btnR_filtered) | ~task_active) )
     begin
         if(btnL_filtered)
             border_pos = (border_pos == 3'b000) ? 3'b000 : border_pos - 1;
         else if(btnR_filtered)
             border_pos = (border_pos >= 3'b100) ? 3'b100 : border_pos + 1;
+        else
+            border_pos = 3'b010;
     end
     
     reg[7:0] start_x = 7'd00;
