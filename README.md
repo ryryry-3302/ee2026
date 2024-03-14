@@ -26,6 +26,6 @@ Remember to pull from main before pushing to prevent any merge conflicts.
 
 ## .gitignore
 - Note that for a free account, the maximum repo size is **50MB**. Hence, the .gitignore folder specifically ignores files that take up high storage. `sources_1\ip` was found to take up 61.6MB by default. Not sure what its for. 
-- The simulation folder is for now, but could be removed in the future if we need to share simulation files.
+- The simulation folder is in gitignore for now, but could be removed in the future if we need to share simulation files.
 
 
