@@ -19,12 +19,12 @@ The files in this repository should have folders for `MODS.SRCS`, importantly,
 ## Troubleshooting
 There might be some issues where vivado is unable to detect a certain file as a design source. The solution I found was to move the file to another location, add a new design source in vivado with the same file name and copy the contents of that file into the new design source in vivado.
 
-### REMINDERS
+## REMINDERS
 Remember to pull from main before pushing to prevent any merge conflicts.
 
 
 
-### .gitignore - IMPORTANT
+## .gitignore
 - Note that for a free account, the maximum repo size is **50MB**. Hence, the .gitignore folder specifically ignores files that take up high storage. `sources_1\ip` was found to take up 61.6MB by default. Not sure what its for. 
 - The simulation folder is for now, but could be removed in the future if we need to share simulation files.
 
