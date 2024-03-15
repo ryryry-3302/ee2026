@@ -72,10 +72,14 @@ module Top_Student (
         task_b_active = sw[2];
     end
     
-    SubTaskB taskb(.clk(clk), .SW0(sw[0]), .task_active(task_b_active),
-                   .btnC(btnC),.btnL(btnL),.btnR(btnR), 
-                   .pixel_index(pixel_index),
-                   .oled_colour(oled_colour));
+    wire [15:0] oled_coloura;
+    wire [15:0] oled_colourb;
+    
+    SubTaskA taska(.sw1(sw[1]),.pixel_index(pixel_index), .clk(clk), .btnC(btnC), .btnD(btnD), .oled_data(oled_coloura));
+
+    SubTaskB taskb(.clk(clk), .SW0(sw[0]), .task_active(task_b_active), .btnC(btnC),.btnL(btnL),.btnR(btnR),  .pixel_index(pixel_index), .oled_colour(oled_colourb));
+    
+    assign oled_colour = sw[1]? oled_coloura: sw[2]? oled_colourb: 0;
 
 
     //Insantiate Imported Modules -----------------------
