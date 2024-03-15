@@ -21,6 +21,8 @@
 
 
 module subtaskDonut(
+    input enable,
+
     input clk,
     input [0:0]sw,
     input btnC,
@@ -28,7 +30,13 @@ module subtaskDonut(
     input btnR,
     input btnL,
     input btnD,
-    output [7:0]JC
+    
+    
+    input [12:0]currentPixel,
+    output [15:0]pixelOutput
+    
+    
+//    output [7:0]JC
     );
     
     wire [15:0]pixelOutput;
@@ -48,7 +56,7 @@ module subtaskDonut(
     
     
     wire my6p25MhzSig;
-    myVarClock my6p25Mhz(clk, 7, my6p25MhzSig);
+    CustomClock my6p25Mhz(clk, 7, my6p25MhzSig);
     
     
     //playerChar
@@ -72,7 +80,7 @@ module subtaskDonut(
     reg currWhite = 0;
     
     wire my25MhzSig;
-    myVarClock my25Mhz(clk, 2, my25MhzSig);
+    CustomClock my25Mhz(clk, 2, my25MhzSig);
     //reg [12:0]my25MhzCounter = 0;
     wire [12:0]currentPixel;
     wire [7:0]currX; wire [7:0]currY; 
@@ -88,7 +96,7 @@ module subtaskDonut(
             pixelOutputReg = allBlack;
         end
         
-        if (btnC && !currMoving) begin 
+        if (btnC && !currMoving && enable) begin 
             xValPlayer = 46;
             yValPlayer = 59;
     //        yValPlayer45 = 59; yValPlayer15 = 59;
@@ -125,7 +133,7 @@ module subtaskDonut(
     
     reg allowedToMove15 = 1;
     wire my15HzSig;
-    myVarClock my15HzClock(clk, 3333332, my15HzSig);
+    CustomClock my15HzClock(clk, 3333332, my15HzSig);
     always @ (posedge my15HzSig) begin
         yValPlayer15 = yValPlayer;
         if (btnC && !currMoving) begin yValPlayer15 = 59; end
@@ -139,7 +147,7 @@ module subtaskDonut(
     
     reg allowedToMove30 = 1;
     wire my30HzSig;
-    myVarClock my30HzClock(clk, 1666666, my30HzSig);
+    CustomClock my30HzClock(clk, 1666666, my30HzSig);
     always @ (posedge my30HzSig) begin
        xValPlayer30 = xValPlayer;
         if (btnC && !currMoving) begin xValPlayer30 = 46; end
@@ -151,7 +159,7 @@ module subtaskDonut(
     
     reg allowedToMove45 = 1;
     wire my45HzSig;
-    myVarClock my45HzClock(clk, 1111110, my45HzSig);
+    CustomClock my45HzClock(clk, 1111110, my45HzSig);
     always @ (posedge my45HzSig) begin
         xValPlayer45 = xValPlayer;
         yValPlayer45 = yValPlayer;
@@ -163,19 +171,19 @@ module subtaskDonut(
         if (currMoveLeft && !sw[0]) begin if(xValPlayer > 0) begin xValPlayer45 = xValPlayer -1; allowedToMove45 = 1; end end
     end
     
-    Oled_Display screen(
-        .clk(my6p25MhzSig),
-        .pixel_data(pixelOutput),
-        .reset(0),
-        .cs(JC[0]),
-        .sdin(JC[1]), 
-        .sclk(JC[3]), 
-        .d_cn(JC[4]), 
-        .resn(JC[5]), 
-        .vccen(JC[6]),
-        .pmoden(JC[7]),
-        .pixel_index(currentPixel)
-        );
+//    Oled_Display screen(
+//        .clk(my6p25MhzSig),
+//        .pixel_data(pixelOutput),
+//        .reset(0),
+//        .cs(JC[0]),
+//        .sdin(JC[1]), 
+//        .sclk(JC[3]), 
+//        .d_cn(JC[4]), 
+//        .resn(JC[5]), 
+//        .vccen(JC[6]),
+//        .pmoden(JC[7]),
+//        .pixel_index(currentPixel)
+//        );
     
     
     endmodule

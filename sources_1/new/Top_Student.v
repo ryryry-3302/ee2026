@@ -34,7 +34,7 @@ module Top_Student (
                          .COUNT_STOP(32'd7),
                          .CLOCK_OUT(CLK_6MHz25));
                           
-    //---------------------------------------------------
+    //celebrateionnnnn!!!!!!!!
 
 
     //Mouse Driver---------------------------------------
@@ -66,21 +66,59 @@ module Top_Student (
     //Task Switching
     //wire taskb_task_active;
     //assign taskb_task_active = sw[2];
+    reg task_a_active = 0;
     reg task_b_active = 1'b0;
+    reg task_c_active = 0;
+    reg task_d_active = 0;
+    
+    assign led[1] = task_a_active;
+    assign led[2] = task_b_active;
+    assign led[3] = task_c_active;
+    assign led[4] = task_d_active;
+    
     always@(posedge CLK_10KHz)
     begin
-        task_b_active = sw[2];
+        task_a_active = sw[1];
+        task_b_active = sw[2] && !sw[1];
+        task_c_active = sw[3] && !sw[2:1];
+        task_d_active = sw[4] && !(sw[3:1]);
     end
     
     wire [15:0] oled_coloura;
     wire [15:0] oled_colourb;
+    wire [15:0] oled_colourc;    
+    wire [15:0] oled_colourd;
     
-    SubTaskA taska(.sw1(sw[1]),.pixel_index(pixel_index), .clk(clk), .btnC(btnC), .btnD(btnD), .oled_data(oled_coloura));
+    SubTaskA taska(.sw1(task_a_active),.pixel_index(pixel_index), .clk(clk), .btnC(btnC), .btnD(btnD), .oled_data(oled_coloura));
 
     SubTaskB taskb(.clk(clk), .SW0(sw[0]), .task_active(task_b_active), .btnC(btnC),.btnL(btnL),.btnR(btnR),  .pixel_index(pixel_index), .oled_colour(oled_colourb));
     
-    assign oled_colour = sw[1]? oled_coloura: sw[2]? oled_colourb: 0;
+    subtask_c_module taskc(.clk(clk), .btnD(btnD), .pixel_index(pixel_index), .oled_data(oled_colourc));
+    
+    subtaskDonut taskD( .enable(task_d_active),.clk(clk),.sw(sw[0]),.btnC(btnC),.btnU(btnU),.btnR(btnR), .btnL(btnL),.btnD(btnD), .currentPixel(pixel_index), .pixelOutput(oled_colourd));
+    
+    assign oled_colour = task_a_active? oled_coloura:
+     task_b_active? oled_colourb:
+     task_c_active? oled_colourc:
+     task_d_active? oled_colourd: paint_colour_chooser;
 
+
+    //7 seg---------------------------------------------------
+    reg [3:0] anReg = 1; reg[6:0] segReg = 0;
+    assign an[3:0] = anReg;
+    assign seg[6:0] = segReg[6:0];
+    always @ (posedge clk) begin 
+        if (!sw[15] && !sw[14] && !sw[13]) begin 
+            anReg = (anReg == 4'b0111)? 4'b1110 : (anReg*2)+1;
+        end else if (!sw[15] && !sw[14] && sw[13]) begin 
+            anReg = (anReg == 4'b0111)? 4'b1110 : 4'b0111;
+        end
+        if (!(sw[15] || sw[14])) begin
+            segReg = (anReg == 4'b0111)? 7'b1101101: (anReg == 4'b1011)? 7'b1001111: (anReg == 4'b1101)? 7'b01111111: (anReg == 4'b1110)? 7'b1111101: 0;
+        end
+        if (sw[15]) begin segReg = Seg_To_Draw; anReg = 1;end
+        if (!sw[15] && sw[14]) begin segReg = Seg_To_Draw; anReg = 2; end
+    end
 
     //Insantiate Imported Modules -----------------------
 
