@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Top_Student (input [15:0]sw,input clk, input btnC,input btnD,output [7:0]JB);
+module Top_StudentA (input [15:0]sw,input clk, input btnC,input btnD,output [7:0]JB);
         wire CLOCKOUT6;
         wire CLOCKOUT25;
         wire fb;
@@ -42,7 +42,7 @@ module Top_Student (input [15:0]sw,input clk, input btnC,input btnD,output [7:0]
         reg enable = 0;
         always @ (posedge CLOCKOUT25)
         begin
-            if(~sw[0])begin
+            if(~sw[1])begin
             enable <= 0;
             
             end
