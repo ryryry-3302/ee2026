@@ -60,7 +60,8 @@ module Top_Student (
 
     wire [15:0] LED_Num_Paint;
     reg [3:0] Num_Detected;
-    wire [6:0] Seg_To_Draw;
+    
+    wire [6:0] paint_v_seg; //Dummy wire var
     wire [15:0] paint_colour_chooser;
     //---------------------------------------------------
     
@@ -104,14 +105,12 @@ module Top_Student (
      task_d_active? oled_colourd: paint_colour_chooser;
 
 
-    //7 seg---------------------------------------------------
-    reg [3:0] anReg = 1; reg[6:0] segReg = 0;
-    
-    //assign an[3:0] = anReg;
-    //assign seg[6:0] = segReg[6:0];
-    
+    //7 seg control--------------------------------------------------
+   
     reg en;
     reg [3:0] digit_0; reg [3:0] digit_1; reg [3:0] digit_2; reg [3:0] digit_3;
+
+    //Dp, Seg, and An driver
     SevenSeg_Control seg_control(
             .clk(clk),
             .en(en), //Write 0 to turn off 7 seg
@@ -166,12 +165,12 @@ module Top_Student (
         else if(sw[15])
             begin
             digit_1 = Num_Detected;  //Paint.v
-            //AN0,2,3 not active so any digit
+            //AN 0,2,3 not active so any digit
             end
         else if(sw[14])
             begin
             digit_0 = Num_Detected; //Paint.v
-            //AN1,2,3 not active, so any digit
+            //AN 1,2,3 not active, so any digit
             end                      
         
         /*
@@ -182,6 +181,7 @@ module Top_Student (
         if (!sw[15] && sw[14]) begin segReg <= Seg_To_Draw; anReg = 2; end
         */
     end
+    //--------------------------------------------------
 
     //Insantiate Imported Modules -----------------------
 
@@ -229,7 +229,7 @@ module Top_Student (
         .mouse_x(xpos), .mouse_y(ypos),
         .pixel_index(pixel_index),
         .led(LED_Num_Paint),       
-        .seg(Seg_To_Draw), 
+        .seg(paint_v_seg), 
         .colour_chooser(paint_colour_chooser)
     );     
 
