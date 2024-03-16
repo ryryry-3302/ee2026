@@ -58,7 +58,8 @@ module Top_Student (
                          .COUNT_STOP(32'd5000 - 1),
                          .CLOCK_OUT(CLK_10KHz));
 
-    wire [15:0] Num_Detected;
+    wire [15:0] LED_Num_Paint;
+    reg [3:0] Num_Detected;
     wire [6:0] Seg_To_Draw;
     wire [15:0] paint_colour_chooser;
     //---------------------------------------------------
@@ -121,7 +122,25 @@ module Top_Student (
             .dp(dp),
             .seg(seg),
             .an(an)
-        );    
+        );
+    
+    always @(LED_Num_Paint)
+    begin
+        case (LED_Num_Paint)
+        11'b00000000001: Num_Detected=4'd0;
+        11'b00000000010: Num_Detected=4'd1;
+        11'b00000000100: Num_Detected=4'd2;
+        11'b00000001000: Num_Detected=4'd3;
+        11'b00000010000: Num_Detected=4'd4;
+        11'b00000100000: Num_Detected=4'd5;
+        11'b00001000000: Num_Detected=4'd6;
+        11'b00010000000: Num_Detected=4'd7;
+        11'b00100000000: Num_Detected=4'd8;
+        11'b01000000000: Num_Detected=4'd9;
+        default: Num_Detected=4'd15; 
+        //By default show nothing if num detected is uncertain?
+        endcase     
+    end    
     
     always @ (posedge clk) 
     begin 
@@ -146,12 +165,12 @@ module Top_Student (
             end
         else if(sw[15])
             begin
-            digit_1 = 8;  //Paint.v
+            digit_1 = Num_Detected;  //Paint.v
             //AN0,2,3 not active so any digit
             end
         else if(sw[14])
             begin
-            digit_0 = 8; //Paint.v
+            digit_0 = Num_Detected; //Paint.v
             //AN1,2,3 not active, so any digit
             end                      
         
@@ -209,7 +228,7 @@ module Top_Student (
         .mouse_l(left_click), .reset(right_click), .enable(1),  
         .mouse_x(xpos), .mouse_y(ypos),
         .pixel_index(pixel_index),
-        .led(Num_Detected),       
+        .led(LED_Num_Paint),       
         .seg(Seg_To_Draw), 
         .colour_chooser(paint_colour_chooser)
     );     
