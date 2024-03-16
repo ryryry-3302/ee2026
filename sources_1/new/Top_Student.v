@@ -5,7 +5,7 @@
 //  FILL IN THE FOLLOWING INFORMATION:
 //  STUDENT A NAME: 
 //  STUDENT B NAME: Yow Keng Yee Samuel
-//  STUDENT C NAME: 
+//  STUDENT C NAME: Lim Yee Kian
 //  STUDENT D NAME:  
 //
 //////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ module Top_Student (
 
     SubTaskB taskb(.clk(clk), .SW0(sw[0]), .task_active(task_b_active), .btnC(btnC),.btnL(btnL),.btnR(btnR),  .pixel_index(pixel_index), .oled_colour(oled_colourb));
     
-    subtask_c_module taskc(.clk(clk), .btnD(btnD), .pixel_index(pixel_index), .oled_data(oled_colourc));
+    subtask_c_module taskc(.enable(task_c_active), .clk(clk), .btnD(btnD), .pixel_index(pixel_index), .oled_data(oled_colourc));
     
     subtaskDonut taskD( .enable(task_d_active),.clk(clk),.sw(sw[0]),.btnC(btnC),.btnU(btnU),.btnR(btnR), .btnL(btnL),.btnD(btnD), .currentPixel(pixel_index), .pixelOutput(oled_colourd));
     
