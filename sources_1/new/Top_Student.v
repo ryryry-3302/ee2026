@@ -108,16 +108,26 @@ module Top_Student (
     assign an[3:0] = anReg;
     assign seg[6:0] = segReg[6:0];
     always @ (posedge clk) begin 
-        if (!sw[15] && !sw[14] && !sw[13]) begin 
-            anReg = (anReg == 4'b0111)? 4'b1110 : (anReg*2)+1;
+        if ( task_a_active || task_b_active || task_c_active || task_d_active )begin
+            anReg <= 4'b1111;
+        end
+        
+        else if (!sw[15] && !sw[14] && !sw[13]) begin 
+            // to reset it to state 1
+            if (anReg == 4'b1111)begin
+                anReg <= 4'b1110;
+            end
+            else begin
+            anReg <= (anReg == 4'b0111)? 4'b1110 : (anReg*2)+1;
+            end
         end else if (!sw[15] && !sw[14] && sw[13]) begin 
-            anReg = (anReg == 4'b0111)? 4'b1110 : 4'b0111;
+            anReg <= (anReg == 4'b0111)? 4'b1110 : 4'b0111;
         end
         if (!(sw[15] || sw[14])) begin
-            segReg = (anReg == 4'b0111)? 7'b1101101: (anReg == 4'b1011)? 7'b1001111: (anReg == 4'b1101)? 7'b01111111: (anReg == 4'b1110)? 7'b1111101: 0;
+            segReg <= (anReg == 4'b0111)? 7'b1101101: (anReg == 4'b1011)? 7'b1001111: (anReg == 4'b1101)? 7'b01111111: (anReg == 4'b1110)? 7'b1111101: 0;
         end
-        if (sw[15]) begin segReg = Seg_To_Draw; anReg = 1;end
-        if (!sw[15] && sw[14]) begin segReg = Seg_To_Draw; anReg = 2; end
+        if (sw[15]) begin segReg <= Seg_To_Draw; anReg <= 1;end
+        if (!sw[15] && sw[14]) begin segReg <= Seg_To_Draw; anReg = 2; end
     end
 
     //Insantiate Imported Modules -----------------------
