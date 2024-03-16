@@ -58,7 +58,8 @@ module Top_Student (
                          .COUNT_STOP(32'd5000 - 1),
                          .CLOCK_OUT(CLK_10KHz));
 
-    wire [15:0] Num_Detected;
+    wire [15:0] LED_Num_Paint;
+    reg [3:0] Num_Detected;
     wire [6:0] Seg_To_Draw;
     wire [15:0] paint_colour_chooser;
     //---------------------------------------------------
@@ -105,29 +106,81 @@ module Top_Student (
 
     //7 seg---------------------------------------------------
     reg [3:0] anReg = 1; reg[6:0] segReg = 0;
-    assign an[3:0] = anReg;
-    assign seg[6:0] = segReg[6:0];
-    always @ (posedge clk) begin 
-        if ( task_a_active || task_b_active || task_c_active || task_d_active )begin
-            anReg <= 4'b1111;
-        end
+    
+    //assign an[3:0] = anReg;
+    //assign seg[6:0] = segReg[6:0];
+    
+    reg en;
+    reg [3:0] digit_0; reg [3:0] digit_1; reg [3:0] digit_2; reg [3:0] digit_3;
+    SevenSeg_Control seg_control(
+            .clk(clk),
+            .en(en), //Write 0 to turn off 7 seg
+            .digit_0(digit_0), //Write 3'b111 (15) to turn off digit
+            .digit_1(digit_1),
+            .digit_2(digit_2),
+            .digit_3(digit_3),
+            .dp(dp),
+            .seg(seg),
+            .an(an)
+        );
+    
+    always @(LED_Num_Paint)
+    begin
+        case (LED_Num_Paint)
+        11'b00000000001: Num_Detected=4'd0;
+        11'b00000000010: Num_Detected=4'd1;
+        11'b00000000100: Num_Detected=4'd2;
+        11'b00000001000: Num_Detected=4'd3;
+        11'b00000010000: Num_Detected=4'd4;
+        11'b00000100000: Num_Detected=4'd5;
+        11'b00001000000: Num_Detected=4'd6;
+        11'b00010000000: Num_Detected=4'd7;
+        11'b00100000000: Num_Detected=4'd8;
+        11'b01000000000: Num_Detected=4'd9;
+        default: Num_Detected=4'd15; 
+        //By default show nothing if num detected is uncertain?
+        endcase     
+    end    
+    
+    always @ (posedge clk) 
+    begin 
+        if ( task_a_active || task_b_active || task_c_active || task_d_active )
+            en <= 0 ;
+        else
+            en <= 1;
+                   
+        if (!sw[15] && !sw[14] && !sw[13])
+            begin  
+            digit_0 = 5;
+            digit_1 = 3;
+            digit_2 = 0;
+            digit_3 = 6;
+            end
+        else if (!sw[15] && !sw[14] && sw[13]) 
+            begin  
+            digit_0 = 15; //off
+            digit_1 = 15; //off
+            digit_2 = 0;
+            digit_3 = 6;
+            end
+        else if(sw[15])
+            begin
+            digit_1 = Num_Detected;  //Paint.v
+            //AN0,2,3 not active so any digit
+            end
+        else if(sw[14])
+            begin
+            digit_0 = Num_Detected; //Paint.v
+            //AN1,2,3 not active, so any digit
+            end                      
         
-        else if (!sw[15] && !sw[14] && !sw[13]) begin 
-            // to reset it to state 1
-            if (anReg == 4'b1111)begin
-                anReg <= 4'b1110;
-            end
-            else begin
-            anReg <= (anReg == 4'b0111)? 4'b1110 : (anReg*2)+1;
-            end
-        end else if (!sw[15] && !sw[14] && sw[13]) begin 
-            anReg <= (anReg == 4'b0111)? 4'b1110 : 4'b0111;
-        end
+        /*
         if (!(sw[15] || sw[14])) begin
             segReg <= (anReg == 4'b0111)? 7'b1101101: (anReg == 4'b1011)? 7'b1001111: (anReg == 4'b1101)? 7'b01111111: (anReg == 4'b1110)? 7'b1111101: 0;
         end
         if (sw[15]) begin segReg <= Seg_To_Draw; anReg <= 1;end
         if (!sw[15] && sw[14]) begin segReg <= Seg_To_Draw; anReg = 2; end
+        */
     end
 
     //Insantiate Imported Modules -----------------------
@@ -175,7 +228,7 @@ module Top_Student (
         .mouse_l(left_click), .reset(right_click), .enable(1),  
         .mouse_x(xpos), .mouse_y(ypos),
         .pixel_index(pixel_index),
-        .led(Num_Detected),       
+        .led(LED_Num_Paint),       
         .seg(Seg_To_Draw), 
         .colour_chooser(paint_colour_chooser)
     );     
