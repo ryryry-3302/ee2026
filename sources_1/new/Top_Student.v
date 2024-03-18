@@ -35,7 +35,7 @@ module Top_Student (
                          .CLOCK_OUT(CLK_6MHz25));
                           
     //celebrateionnnnn!!!!!!!!
-
+    wire [15:0] celebration_oled_colour = 16'h07E0; // Green color
 
     //Mouse Driver---------------------------------------
     wire [11:0] xpos; wire [11:0] ypos; wire [3:0] zpos;
@@ -102,7 +102,8 @@ module Top_Student (
     assign oled_colour = task_a_active? oled_coloura:
      task_b_active? oled_colourb:
      task_c_active? oled_colourc:
-     task_d_active? oled_colourd: paint_colour_chooser;
+     task_d_active? oled_colourd:
+     celebrationState? celebration_oled_colour:paint_colour_chooser;
 
 
     //7 seg control--------------------------------------------------
@@ -158,17 +159,29 @@ module Top_Student (
             anode_1 <= 15; anode_0 <= 15;  //Off
             anode_3 <= 5;  anode_2 <= 3;   //4.E4
             end
-        else if(sw[15])  //AN3, AN2, AN1 not affected
+        else if(!sw[15] && sw[14])  //AN3, AN2, AN1 not affected
             begin
             anode_0 <= Num_Detected; //AN0 > Paint,v
             end
-        else if(sw[14])  //AN3, AN2, AN0 not affected
+        else if(sw[15])  //AN3, AN2, AN0 not affected
             begin
             anode_1 <= Num_Detected;  //AN1 > Paint,v
             end
     end
     //--------------------------------------------------
-
+    
+    //Celebration detection ----------------------------
+    reg celebrationState = 0;
+    always @ (posedge clk)
+    begin
+        if (anode_0 ==  6 && anode_1 == 0 && btnC && en) begin
+            celebrationState <= 1;
+        end
+        else if (en == 0) begin
+            celebrationState <= 0;
+        end
+    end
+    
     //Insantiate Imported Modules -----------------------
 
     Oled_Display myoled(
