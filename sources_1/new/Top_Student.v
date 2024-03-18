@@ -157,19 +157,19 @@ module Top_Student (
             end
         else if (!sw[15] && !sw[14] && sw[13]) 
             begin  
-            digit_0 = 15; //off
-            digit_1 = 15; //off
-            digit_2 = 0;
-            digit_3 = 6;
+            digit_0 = 5; //off
+            digit_1 = 3; //off
+            digit_2 = 15;
+            digit_3 = 15;
             end
         else if(sw[15])
             begin
-            digit_1 = Num_Detected;  //Paint.v
+            digit_2  = Num_Detected;  //Paint.v
             //AN 0,2,3 not active so any digit
             end
         else if(sw[14])
             begin
-            digit_0 = Num_Detected; //Paint.v
+            digit_3 = Num_Detected; //Paint.v
             //AN 1,2,3 not active, so any digit
             end                      
         
