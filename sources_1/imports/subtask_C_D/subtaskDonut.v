@@ -78,21 +78,9 @@ module subtaskDonut(
     wire currMoving;
     assign currMoving = (currMoveRight || currMoveLeft || currMoveUp || currMoveDown);
     reg currWhite = 0;
-
-    always @ (enable) begin
-        xValPlayer = 0;
-        yValPlayer = 0;
-        yValPlayer15 = 0;
-        xValPlayer30 = 0;
-        xValPlayer45 = 0;
-        yValPlayer45 = 0;
-        currMoveRight = 0;
-        currMoveLeft = 0;
-        currMoveUp = 0;
-        currMoveDown = 0;
-        currWhite = 0;
-    end
+    reg justEnabled = 1;
     
+
     wire my25MhzSig;
     CustomClock my25Mhz(clk, 2, my25MhzSig);
     //reg [12:0]my25MhzCounter = 0;
@@ -118,9 +106,18 @@ module subtaskDonut(
             currMoveRight <= 0; currMoveLeft <= 0; currMoveUp <= 0;
             currWhite = 1;
         end      
-        
-        xValPlayer = sw[0]? xValPlayer30: xValPlayer45;
-        yValPlayer = sw[0]? yValPlayer15: yValPlayer45;
+        if (enable)begin
+            xValPlayer = sw[0]? xValPlayer30: xValPlayer45;
+            yValPlayer = sw[0]? yValPlayer15: yValPlayer45;
+        end else begin
+            xValPlayer = 0;
+            yValPlayer = 0;
+            currMoveRight = 0;
+            currMoveLeft = 0;
+            currMoveUp = 0;
+            currWhite = 0;
+        end
+        justEnabled = !enable;
     
         if (xValPlayer == 91) begin currMoveRight = 0; end
         if (xValPlayer == 0) begin currMoveLeft = 0;end
@@ -148,11 +145,11 @@ module subtaskDonut(
     reg allowedToMove15 = 1;
     wire my15HzSig;
     CustomClock my15HzClock(clk, 3333332, my15HzSig);
-    always @ (posedge my15HzSig) begin
+    always @ (posedge (my15HzSig)) begin
         yValPlayer15 = yValPlayer;
-        if (btnC && !currMoving) begin yValPlayer15 = 59; end
+        if (btnC && !currMoving && enable) begin yValPlayer15 = 59; end
     //    if (currMoveDown) begin yValPlayer = (yValPlayer >= 64-5)? yValPlayer: yValPlayer+1; end
-        if (currMoveUp && sw[0]) begin if(yValPlayer15 > 0)
+        if (currMoveUp && sw[0] && enable) begin if(yValPlayer15 > 0 && enable)
             begin yValPlayer15 = yValPlayer - 1; allowedToMove15 = 1; end
             end 
     //    if (currMoveRight && sw[0]) begin xValPlayer = (xValPlayer >=96-5)? xValPlayer: xValPlayer+1; end
@@ -164,11 +161,11 @@ module subtaskDonut(
     CustomClock my30HzClock(clk, 1666666, my30HzSig);
     always @ (posedge my30HzSig) begin
        xValPlayer30 = xValPlayer;
-        if (btnC && !currMoving) begin xValPlayer30 = 46; end
+        if (btnC && !currMoving && enable) begin xValPlayer30 = 46; end
     //    if (currMoveDown) begin yValPlayer = (yValPlayer >= 64-5)? yValPlayer: yValPlayer+1; end
     //    if (currMoveUp) begin yValPlayer = (yValPlayer <= 0)? yValPlayer: yValPlayer-1; end
-        if (currMoveRight && sw[0]) begin if(xValPlayer < 91) begin xValPlayer30 = xValPlayer+1; allowedToMove30 = 1; end end
-        if (currMoveLeft && sw[0]) begin if (xValPlayer > 0) begin xValPlayer30 = xValPlayer-1; allowedToMove30 = 1; end end
+        if (currMoveRight && sw[0] && enable) begin if(xValPlayer < 91 && enable) begin xValPlayer30 = xValPlayer+1; allowedToMove30 = 1; end end
+        if (currMoveLeft && sw[0] && enable) begin if (xValPlayer > 0 && enable) begin xValPlayer30 = xValPlayer-1; allowedToMove30 = 1; end end
     end
     
     reg allowedToMove45 = 1;
@@ -177,12 +174,12 @@ module subtaskDonut(
     always @ (posedge my45HzSig) begin
         xValPlayer45 = xValPlayer;
         yValPlayer45 = yValPlayer;
-        if (btnC && !currMoving) begin yValPlayer45 = 59; allowedToMove45 = 0; end
-        if (btnC && !currMoving) begin xValPlayer45 = 46; end
+        if (btnC && !currMoving && enable) begin yValPlayer45 = 59; allowedToMove45 = 0; end
+        if (btnC && !currMoving && enable) begin xValPlayer45 = 46; end
     //    if (currMoveDown && !sw[0]) begin yValPlayer = (yValPlayer >= 64-5)? yValPlayer: yValPlayer+1; end
-        if (currMoveUp && !sw[0]) begin if (yValPlayer > 0)begin yValPlayer45 =  yValPlayer -1; allowedToMove45 = 1; end end
-        if (currMoveRight && !sw[0]) begin if(xValPlayer < 91)begin xValPlayer45 =  xValPlayer + 1; allowedToMove45 = 1;  end end
-        if (currMoveLeft && !sw[0]) begin if(xValPlayer > 0) begin xValPlayer45 = xValPlayer -1; allowedToMove45 = 1; end end
+        if (currMoveUp && !sw[0] && enable) begin if (yValPlayer > 0 && enable)begin yValPlayer45 =  yValPlayer -1; allowedToMove45 = 1; end end
+        if (currMoveRight && !sw[0] && enable) begin if(xValPlayer < 91 && enable)begin xValPlayer45 =  xValPlayer + 1; allowedToMove45 = 1;  end end
+        if (currMoveLeft && !sw[0] && enable) begin if(xValPlayer > 0 && enable) begin xValPlayer45 = xValPlayer -1; allowedToMove45 = 1; end end
     end
     
 //    Oled_Display screen(
