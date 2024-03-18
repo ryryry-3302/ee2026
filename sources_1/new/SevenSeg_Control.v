@@ -12,7 +12,7 @@ module SevenSeg_Control(
 
     //00, 01, 10, 11
     reg [1:0] digit_pos = 2'b00;
-    reg [3:0] display_num = 4'b000;
+    reg [3:0] display_num = 4'b0000;
     
     /* //Was used for testing the code
     reg en = 0;
@@ -22,12 +22,18 @@ module SevenSeg_Control(
     reg [3:0] digit_3 = 1;
     */
     // made slower to remove bleed
-    wire CLK_5KHz; //100kHz                    
-    CustomClock clk10khz(.CLOCK_IN(clk),
+    wire CLK_5KHz;                   
+    CustomClock clk5khz(.CLOCK_IN(clk),
                          .COUNT_STOP(32'd2500 - 1),
                          .CLOCK_OUT(CLK_5KHz));
+
+    wire CLK_DIGIT; //500Hz                    
+    CustomClock clk1hz(.CLOCK_IN(clk),
+                         .COUNT_STOP(32'd100_000 - 1),
+                         .CLOCK_OUT(CLK_DIGIT));                        
+                         
     
-    always @(posedge CLK_5KHz)
+    always @(posedge CLK_DIGIT)
         begin
             digit_pos <= digit_pos + 1;
         end
@@ -43,11 +49,11 @@ module SevenSeg_Control(
             endcase
          end
     
-    
-     //Segements     
-    always @(CLK_5KHz)
+       
+    always @(display_num)
         begin   
            
+           //Segments
             case (display_num)
                 0: seg  <= 7'b1000000;
                 1: seg  <= 7'b1111001;
@@ -59,14 +65,11 @@ module SevenSeg_Control(
                 7: seg  <= 7'b1111000;
                 8: seg  <= 7'b0000000;
                 9: seg  <= 7'b0010000;
-                15: seg <= 7'b1111111; //Turn the segment off, display_num = 3'b111
+                15: seg <= 7'b1111111; //Turn the segment off, display_num = 4'b1111
                 default : seg <= 7'b0001001; //Debugging
             endcase
-        end
-    
-    //Annode
-    always @(CLK_5KHz)
-        begin
+            
+            //Annode Control & en
             if(!en)
                 an <= 4'b1111;
             else
@@ -77,12 +80,14 @@ module SevenSeg_Control(
                     2'b10: an <= 4'b1101;
                     2'b11: an <= 4'b1110;
                 endcase
-        
+            
                 if(digit_pos == 2'b01)
                     dp <= 1'b0;
                 else    
                     dp <= 1'b1;
-                end
+                    
+                end            
+            
         end
-
+    
 endmodule
