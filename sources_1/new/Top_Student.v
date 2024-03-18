@@ -108,16 +108,16 @@ module Top_Student (
     //7 seg control--------------------------------------------------
    
     reg en;
-    reg [3:0] digit_0; reg [3:0] digit_1; reg [3:0] digit_2; reg [3:0] digit_3;
+    reg [3:0] anode_0; reg [3:0] anode_1; reg [3:0] anode_2; reg [3:0] anode_3;
 
     //Dp, Seg, and An driver
     SevenSeg_Control seg_control(
             .clk(clk),
             .en(en), //Write 0 to turn off 7 seg
-            .digit_0(digit_0), //Write 3'b111 (15) to turn off digit
-            .digit_1(digit_1),
-            .digit_2(digit_2),
-            .digit_3(digit_3),
+            .digit_0(anode_3),  //Write 3'b111 (15) to turn off digit
+            .digit_1(anode_2),  //Anode numbering for proj is right to left lol
+            .digit_2(anode_1),
+            .digit_3(anode_0),
             .dp(dp),
             .seg(seg),
             .an(an)
@@ -147,39 +147,25 @@ module Top_Student (
             en <= 0 ;
         else
             en <= 1;
-                   
+           
         if (!sw[15] && !sw[14] && !sw[13])
-            begin  
-            digit_0 = 5;
-            digit_1 = 3;
-            digit_2 = 0;
-            digit_3 = 6;
+            begin 
+            anode_1 = 0; anode_1 = 6;   //Grp Number
+            anode_3 = 5; anode_2 = 3;  //5, Wed PM
             end
         else if (!sw[15] && !sw[14] && sw[13]) 
             begin  
-            digit_0 = 5; //off
-            digit_1 = 3; //off
-            digit_2 = 15;
-            digit_3 = 15;
+            anode_1 = 15; anode_0 = 15;  //Off
+            anode_3 = 5;  anode_2 = 3;   //4.E4
             end
-        else if(sw[15])
+        else if(sw[15])  //AN3, AN2, AN1 not affected
             begin
-            digit_2  = Num_Detected;  //Paint.v
-            //AN 0,2,3 not active so any digit
+            anode_0  = Num_Detected; //AN0 > Paint,v
             end
-        else if(sw[14])
+        else if(sw[14])  //AN3, AN2, AN0 not affected
             begin
-            digit_3 = Num_Detected; //Paint.v
-            //AN 1,2,3 not active, so any digit
-            end                      
-        
-        /*
-        if (!(sw[15] || sw[14])) begin
-            segReg <= (anReg == 4'b0111)? 7'b1101101: (anReg == 4'b1011)? 7'b1001111: (anReg == 4'b1101)? 7'b01111111: (anReg == 4'b1110)? 7'b1111101: 0;
-        end
-        if (sw[15]) begin segReg <= Seg_To_Draw; anReg <= 1;end
-        if (!sw[15] && sw[14]) begin segReg <= Seg_To_Draw; anReg = 2; end
-        */
+            anode_1 = Num_Detected;  //AN1 > Paint,v
+            end
     end
     //--------------------------------------------------
 
