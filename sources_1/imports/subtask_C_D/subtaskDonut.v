@@ -78,6 +78,20 @@ module subtaskDonut(
     wire currMoving;
     assign currMoving = (currMoveRight || currMoveLeft || currMoveUp || currMoveDown);
     reg currWhite = 0;
+
+    always @ (enable) begin
+        xValPlayer = 0;
+        yValPlayer = 0;
+        yValPlayer15 = 0;
+        xValPlayer30 = 0;
+        xValPlayer45 = 0;
+        yValPlayer45 = 0;
+        currMoveRight = 0;
+        currMoveLeft = 0;
+        currMoveUp = 0;
+        currMoveDown = 0;
+        currWhite = 0;
+    end
     
     wire my25MhzSig;
     CustomClock my25Mhz(clk, 2, my25MhzSig);
