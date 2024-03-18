@@ -150,21 +150,21 @@ module Top_Student (
            
         if (!sw[15] && !sw[14] && !sw[13])
             begin 
-            anode_1 = 0; anode_1 = 6;   //Grp Number
-            anode_3 = 5; anode_2 = 3;  //5, Wed PM
+            anode_1 <= 0; anode_0 <= 6;   //Grp Number
+            anode_3 <= 5; anode_2 <= 3;  //5, Wed PM
             end
         else if (!sw[15] && !sw[14] && sw[13]) 
             begin  
-            anode_1 = 15; anode_0 = 15;  //Off
-            anode_3 = 5;  anode_2 = 3;   //4.E4
+            anode_1 <= 15; anode_0 <= 15;  //Off
+            anode_3 <= 5;  anode_2 <= 3;   //4.E4
             end
         else if(sw[15])  //AN3, AN2, AN1 not affected
             begin
-            anode_0  = Num_Detected; //AN0 > Paint,v
+            anode_0 <= Num_Detected; //AN0 > Paint,v
             end
         else if(sw[14])  //AN3, AN2, AN0 not affected
             begin
-            anode_1 = Num_Detected;  //AN1 > Paint,v
+            anode_1 <= Num_Detected;  //AN1 > Paint,v
             end
     end
     //--------------------------------------------------
