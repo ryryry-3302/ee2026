@@ -77,10 +77,10 @@ module Top_Student (
     reg task_c_active = 0;
     reg task_d_active = 0;
     
-    assign led[1] = task_a_active;
-    assign led[2] = task_b_active;
-    assign led[3] = task_c_active;
-    assign led[4] = task_d_active;
+    assign led[0] = task_a_active;
+    assign led[1] = task_b_active;
+    assign led[2] = task_c_active;
+    assign led[3] = task_d_active;
     
     always@(posedge CLK_10KHz)
     begin

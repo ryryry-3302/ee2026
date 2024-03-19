@@ -99,7 +99,7 @@ module SubTaskA (input sw1,input [12:0]pixel_index,input clk, input btnC,input b
          
          wire orangeCircle;
          // Instantiate drawCircle module
-         drawCircle drawCircle_inst (.clock(CLOCKOUT25), .pixel_index(pixel_index), .center_X(96/2), .center_Y(64/2), .radius(6), .draw(orangeCircle));
+         drawCircle drawCircle_inst (.clock(CLOCKOUT25), .pixel_index(pixel_index), .center_X(96/2), .center_Y(64/2), .radius(9), .draw(orangeCircle));
          
          wire greenTriangle;
          // Instantiate drawEquilateralTriangle module
