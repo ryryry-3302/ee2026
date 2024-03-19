@@ -27,24 +27,26 @@ module SW_StartDetect(
     input task_active, 
     output reg Start = 1'b0);
     
-    wire SW_CLK; //1Hz for SW    
+    wire SW_CLK; //10Hz for SW    
     CustomClock clk1hz(.CLOCK_IN(Master_Clock),
-                        .COUNT_STOP(32'd50_000_000 - 1),
+                        .COUNT_STOP(32'd5_000_000 - 1),
                         .CLOCK_OUT(SW_CLK));
     
-    reg [2:0] timer = 3'b000;
+    reg [5:0] timer = 0; //Aim is to hit 40 for 10Hz Clock
                         
     always@(posedge SW_CLK)
     begin
-        if(SW_in && task_active)
-            timer = (timer < 4) ? timer + 1: timer ;
+        if(~task_active)
+            timer = 0;
+        else if(SW_in)
+            timer = (timer < 40) ? timer + 1: timer;
         else 
             timer = 0;
     end
     
     always@(posedge Fast_Clock)
     begin
-        if(timer >= 3'b100)
+        if(timer >= 40)
             Start = 1'b1;
         else
             Start = 1'b0;
