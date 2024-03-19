@@ -35,7 +35,10 @@ module Top_Student (
                          .CLOCK_OUT(CLK_6MHz25));
                           
     //celebrateionnnnn!!!!!!!!
-    wire [15:0] celebration_oled_colour = 16'h07E0; // Green color
+    //Celebration Module -----------------------------------
+    wire [15:0] celebration_oled_colour;
+
+    congrats_modules my_congrats (.clk(clk), .celebrationState(celebrationState), .pixel_index(pixel_index), .oled_data(celebration_oled_colour));
 
     //Mouse Driver---------------------------------------
     wire [11:0] xpos; wire [11:0] ypos; wire [3:0] zpos;
