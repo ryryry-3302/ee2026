@@ -1,10 +1,10 @@
 // Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2018.2 (win64) Build 2258646 Thu Jun 14 20:03:12 MDT 2018
-// Date        : Tue Mar 19 10:10:28 2024
-// Host        : LAPTOP-COA4GTIR running 64-bit major release  (build 9200)
-// Command     : write_verilog -force -mode synth_stub
-//               C:/yk_ee2026/integrated_grp_proj/MODS/MODS.srcs/sources_1/ip/blk_mem_gen_img/blk_mem_gen_img_stub.v
+// Date        : Sat Mar 16 18:42:45 2024
+// Host        : DESKTOP-MVE1ED3 running 64-bit major release  (build 9200)
+// Command     : write_verilog -force -mode synth_stub -rename_top blk_mem_gen_img -prefix
+//               blk_mem_gen_img_ blk_mem_gen_img_stub.v
 // Design      : blk_mem_gen_img
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7a35tcpg236-1

@@ -44,6 +44,7 @@ module Top_Student (
     wire [11:0] xpos; wire [11:0] ypos; wire [3:0] zpos;
     wire newevent;
     wire left_click, centre_click, right_click;
+    reg reset; //used for paint
 
     //---------------------------------------------------
 
@@ -148,10 +149,15 @@ module Top_Student (
     always @ (posedge clk) 
     begin 
         if ( task_a_active || task_b_active || task_c_active || task_d_active )
+            begin
             en <= 0 ;
+            reset <= 1;
+            end
         else
+            begin
             en <= 1;
-           
+            reset <= right_click;
+            end
         if (!sw[15] && !sw[14] && !sw[13])
             begin 
             anode_1 <= 0; anode_0 <= 6;   //Grp Number
@@ -221,13 +227,16 @@ module Top_Student (
         .ps2_clk(PS2Clk),
         .ps2_data(PS2Data));
 
+
+    
+    
     paint paint_mod(
         .clk_100M(clk),
         .clk_25M(CLK_25MHz),
         .clk_12p5M(CLK_12MHz5),
         .clk_6p25M(CLK_6MHz25),
         .slow_clk(CLK_10KHz),
-        .mouse_l(left_click), .reset(right_click), .enable(1),  
+        .mouse_l(left_click), .reset(reset), .enable(1),  
         .mouse_x(xpos), .mouse_y(ypos),
         .pixel_index(pixel_index),
         .led(LED_Num_Paint),       
